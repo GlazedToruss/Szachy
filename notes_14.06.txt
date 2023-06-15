@@ -1,3 +1,12 @@
+To run this project, install:
+
+-django
+-django-debug-toolbar
+-chess
+-chess.svg
+
+
+
 Done:
 -Implemented chess logic using 'chess' and 'chess.svc' libraries
 -Generating chessboard, based on FEN notation
