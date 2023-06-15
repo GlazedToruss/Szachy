@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chessboard</title>
+    <style>
+        .board {
+            width: 700px;
+            height: 700px;
+        }
+    </style>
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function sendMessage() {
+        var message = document.getElementById("message-input").value;
+
+        // Create a new XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Set up the request
+        xhr.open("POST", "/play/show", true);
+
+        // Set the content type header
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        // Get the CSRF token
+        var csrftoken = getCookie('csrftoken');
+
+        // Set the CSRF token in the request header
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+
+        // Set up the callback function
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                // Handle the server response if needed
+                console.log("Server response:", xhr.responseText);
+            }
+        };
+
+        // Send the request
+        xhr.send("message=" + encodeURIComponent(message));
+    }
+</script>
+
+
+</head>
+<body>
+    <h1>Chessboard</h1>
+    <div class="board">
+        {{ svg_board|safe }}
+    </div>
+    <p>
+        {% if turn == True %}
+          White to move
+        {% else %}
+          Black to move
+        {% endif %}
+    </p>
+    <input type="text" id="message-input" placeholder="Enter your message">
+    <button onclick="sendMessage()">Send Message</button>
+</body>
+</html>

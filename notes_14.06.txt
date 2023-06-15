@@ -1,0 +1,17 @@
+Done:
+-Implemented chess logic using 'chess' and 'chess.svc' libraries
+-Generating chessboard, based on FEN notation
+-Basic url utility
+-Basic server<->client connection
+
+ToDo:
+- Users + games database
+- Login utility + page
+- Improve client<->server connection and connect it with game logic to let user play the game
+- More
+
+
+gracz - login hasło, id, nick, jakieś inne pierdoły
+
+gra - id, historię ruchów, jacy gracze biorą udział, ewentualnie czas itp 
+
