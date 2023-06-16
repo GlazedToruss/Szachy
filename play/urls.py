@@ -7,4 +7,5 @@ urlpatterns = [
     path("", views.board),
     path("generate", views.generate_board),
     path('show', views.chessboard, name='chessboard'),
+    path('login', views.login),
 ]

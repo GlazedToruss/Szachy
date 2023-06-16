@@ -24,7 +24,8 @@ def chessboard(request):
         }
         return render(request, 'chessboard.html', context)
     
-
+def login(request):
+    return render(request, 'login.html')
 
 def generate_board(request):
     board = chess.Board("r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4")
