@@ -3,7 +3,6 @@ from django.http import HttpResponse
 import chess
 import chess.svg
 # Create your views here.
-
     
 def chessboard(request):
     if request.method == 'POST':
@@ -16,6 +15,9 @@ def chessboard(request):
         return HttpResponse(f'Message received: {message}')
     else:
         board = chess.Board()
+        board.push_san('e4')
+        board.push_san('d5')
+        board.push_san('exd5')
         svg_board = chess.svg.board(board=board)
         turn = board.turn
         context = {
@@ -27,8 +29,11 @@ def chessboard(request):
 
 
 def generate_board(request):
-    board = chess.Board("r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4")
-    return HttpResponse("done generating board")
+    board = chess.Board()
+    return HttpResponse(("done generating board: " + board.fen() ))
 
 def board(request):
-    return HttpResponse(print(chess.Board))
+    board = chess.Board()
+    squares = chess.SquareSet()
+#    img = chess.svg.board(board=board)
+    return HttpResponse(chess.svg.board(board=board, squares=squares))
