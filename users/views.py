@@ -1,21 +1,45 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .forms import CreateUserForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 # Create your views here.
-def home(request):
-    return render(request, 'home.html', {})
-def login_user(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
+#to jakiś syf ale boję się go usunąć
+def usr(request):
+    return render(request, 'login_page.html')
+
+def register(request):
+    
+    form = CreateUserForm()
+    if request.method == 'POST':
+        form=CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = form.cleaned_data.get('username')
+            messages.success(request, 'Account was created for ' + user)
+            return redirect('/users/login')
+    context ={'form':form}
+    return render(request, 'register_page.html', context)
+
+
+
+
+def loginn(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
-            # Redirect to a success page.
-            return redirect('home')
+            return redirect('/play')
         else:
-            # Return an 'invalid login' error message.
-            return redirect('users')
+            messages.info(request, 'Username or Passowrd is incorrect :c')
             
-    else:
-        return render(request, 'login.html')
+    context = {}
+    return render(request, 'login_page.html', context)
+def logoutt(request):
+    logout(request)
+    return redirect('/users/login')
