@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import chess
 import chess.svg
+from django.contrib.auth.decorators import login_required
 # Create your views here.
     
 def chessboard(request):
@@ -26,9 +27,6 @@ def chessboard(request):
         }
         return render(request, 'chessboard.html', context)
     
-def login(request):
-    return render(request, 'login.html')
-
 def generate_board(request):
     board = chess.Board()
     return HttpResponse(("done generating board: " + board.fen() ))
@@ -38,3 +36,6 @@ def board(request):
     squares = chess.SquareSet()
 #    img = chess.svg.board(board=board)
     return HttpResponse(chess.svg.board(board=board, squares=squares))
+@login_required(login_url='/users/login')
+def play_home(request):
+    return render(request, 'play.html')
