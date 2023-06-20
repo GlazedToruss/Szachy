@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .forms import CreateUserForm
 from django.contrib.auth.forms import UserCreationForm
 # Create your views here.
 def home(request):
@@ -8,21 +9,19 @@ def home(request):
 def usr(request):
     return render(request, 'login_page.html')
 def register(request):
-    form = UserCreationForm()
+    form = CreateUserForm()
+    if request.method == 'POST':
+        form=CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = form.cleaned_data.get('username')
+            messages.success(request, 'Account was created for ' + user)
+            return redirect('/users/login')
     context ={'form':form}
-    return render(request, 'register_page.html')
+    return render(request, 'register_page.html', context)
+
+
+
+
 def login(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            # Redirect to a success page.
-            return redirect('home')
-        else:
-            # Return an 'invalid login' error message.
-            return redirect('users')
-            
-    else:
-        return render(request, 'login.html')
+    return render(request, 'login_page.html')
