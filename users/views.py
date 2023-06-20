@@ -1,12 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 # Create your views here.
 def home(request):
     return render(request, 'home.html', {})
 def usr(request):
     return render(request, 'login_page.html')
-def login_user(request):
+def register(request):
+    form = UserCreationForm()
+    context ={'form':form}
+    return render(request, 'register_page.html')
+def login(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
