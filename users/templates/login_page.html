@@ -50,20 +50,16 @@
     <h2>Login here:</h2>
     <form method="POST" action="">
         {% csrf_token %}
-        {{form.username.label}}
-        {{form.username}}
-        {{form.email.label}}
-        {{form.email}}
-        {{form.password1.label}}
-        {{form.password1}}
-        {{form.password2.label}}
-        {{form.password2}}
-      <input type="submit" value="Sign up">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="submit" value="Login">
     </form>
     {% for message in messages %}
-        <p>{{message}}</p>
+        <p class="container">{{message}}</p>
     {% endfor %}
+    <div class="container">
     Not a user? <a href="/users/register" class="button">Register here</a>
+    </div>
   </div>
 </body>
 </html>
