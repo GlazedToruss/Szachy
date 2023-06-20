@@ -16,9 +16,6 @@ def chessboard(request):
         return HttpResponse(f'Message received: {message}')
     else:
         board = chess.Board()
-        board.push_san('e4')
-        board.push_san('d5')
-        board.push_san('exd5')
         svg_board = chess.svg.board(board=board)
         turn = board.turn
         context = {
