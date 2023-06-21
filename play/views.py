@@ -15,7 +15,8 @@ def get_random_string(length):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str 
-def chessboard(request):
+
+def chessboard(request, game_id):
     if request.method == 'POST':
         move = request.POST.get('move')
         if 'board' not in request.session:
@@ -42,7 +43,7 @@ def chessboard(request):
         request.session['board'] = board.fen()
 
         # Generate the SVG representation of the updated chessboard
-        svg_board = chess.svg.board(board=board)
+        svg_board = chess.svg.board(board=board, lastmove=parsed_move)
 
         # Pass the updated chessboard, validation result, and message to the template
         context = {
@@ -77,6 +78,7 @@ def generate_board(request):
 @login_required(login_url='/users/login')
 def play_home(request):
     return render(request, 'play.html')
+
 def board(request):
     board = chess.Board()
     squares = chess.SquareSet()
@@ -90,14 +92,16 @@ def play_home(request):
 @login_required(login_url='/users/login')
 def history(request):
     return render(request, 'history.html')
+
 @login_required(login_url='/users/login')
 def join(request):
     return render(request, )
+
 @login_required
 def create_game(request):
     #if request.method == 'POST':
         user = request.user  # Pobranie obiektu aktualnie zalogowanego użytkownika
-        id=get_random_string(8)
+        id=random.randint(1000000000, 9999999999)
         game = Game(i_d=id, moves='...', player1=user)
         game.save()
         my_variable='hello'
@@ -106,7 +110,17 @@ def create_game(request):
         return redirect(f"/play/new/{id}/", context, id)
        
     #return render(request, 'create_game.html')
+
 @login_required
-def waiting_for_player(request, id):
-    
-    return render(request, 'waiting_for_player.html')
+def waiting_for_player(request, game_id):
+#   Potrzebna logika, sprawdzająca czy obiekt gry o 'i_d = game_id', ma flagę 'game_is_waiting' ustawioną na True czy na False
+#    if game_is_waiting(game_id):
+#        return redirect('play_game', game_id=game_id)
+#   else:
+        return render(request, 'waiting_for_player.html', {'id': game_id})
+
+#@login_required(login_url='/users/login')
+#def play_game(request, game_id):
+#    game = Game.objects.get(is_waiting=game_id)
+#    return redirect('chessboard', request, game=game)
+
