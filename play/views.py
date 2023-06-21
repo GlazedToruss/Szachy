@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import chess
 import chess.svg
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import Game
 # Create your views here.
     
 def chessboard(request):
@@ -64,11 +66,31 @@ def generate_board(request):
     board = chess.Board()
     return HttpResponse(("done generating board: " + board.fen() ))
 
+@login_required(login_url='/users/login')
+def play_home(request):
+    return render(request, 'play.html')
 def board(request):
     board = chess.Board()
     squares = chess.SquareSet()
 #    img = chess.svg.board(board=board)
     return HttpResponse(chess.svg.board(board=board, squares=squares))
+
 @login_required(login_url='/users/login')
 def play_home(request):
     return render(request, 'play.html')
+
+@login_required(login_url='/users/login')
+def history(request):
+    return render(request, 'history.html')
+@login_required(login_url='/users/login')
+@login_required
+def create_game(request):
+    if request.method == 'POST':
+        user = request.user  # Pobranie obiektu aktualnie zalogowanego użytkownika
+        return redirect('/play/waiting')
+       
+    return render(request, 'create_game.html')
+@login_required
+def waiting_for_player(request):
+    
+    return render(request, 'waiting_for_player.html')
