@@ -1,0 +1,22 @@
+Done:
+@Paweł
+- Let user create a game (generating game_ID is necessary)
+- on /play/ website, let user create new Game
+
+
+@Maciek
+- Make use of game_ID to manage various games (Partially)
+- Manage accessibility of all the game sessions via unique url (game_ID might be used) (Partially)
+- Changed the game ID generation to be numeric-only (fixed some problems by doing so)
+
+
+ToDo:
+
+@Paweł
+-CORRECTLY PERFORM MIGRATION!!!! (code doesn't work atm due to some new fields being added to Game model !!)
+- let user their last 10 games history on '/play/' (describe them by ID or date of creation) and let them check history of
+all the games played
+
+
+@Maciej
+-Change previous concept, so user can join using 'Join Game' button and providing the game ID, not using the URL.
