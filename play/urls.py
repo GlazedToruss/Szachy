@@ -9,5 +9,6 @@ urlpatterns = [
     path('show', views.chessboard, name='chessboard'),
     path('history', views.history),
     path('new', views.create_game),
-    path('waiting', views.waiting_for_player),
+    path('new/<str:id>/', views.waiting_for_player),
+    path("join", views.join),
 ]

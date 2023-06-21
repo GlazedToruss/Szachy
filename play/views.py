@@ -4,9 +4,17 @@ import chess
 import chess.svg
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Game
+from play.models import Game
+from django.db import models
 # Create your views here.
-    
+import random
+import string
+
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str 
 def chessboard(request):
     if request.method == 'POST':
         move = request.POST.get('move')
@@ -83,14 +91,22 @@ def play_home(request):
 def history(request):
     return render(request, 'history.html')
 @login_required(login_url='/users/login')
+def join(request):
+    return render(request, )
 @login_required
 def create_game(request):
-    if request.method == 'POST':
+    #if request.method == 'POST':
         user = request.user  # Pobranie obiektu aktualnie zalogowanego użytkownika
-        return redirect('/play/waiting')
+        id=get_random_string(8)
+        game = Game(i_d=id, moves='...', player1=user)
+        game.save()
+        my_variable='hello'
+        context = {'my_variable': my_variable}
+        #return render(request, 'waiting_for_player.html', context)
+        return redirect(f"/play/new/{id}/", context, id)
        
-    return render(request, 'create_game.html')
+    #return render(request, 'create_game.html')
 @login_required
-def waiting_for_player(request):
+def waiting_for_player(request, id):
     
     return render(request, 'waiting_for_player.html')
