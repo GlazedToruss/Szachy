@@ -2,20 +2,53 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import chess
 import chess.svg
+from django.contrib.auth.decorators import login_required
 # Create your views here.
-
     
 def chessboard(request):
     if request.method == 'POST':
-        message = request.POST.get('message')
-        print("Client message: " + message)
-    # Process the player's message here
-    # You can perform validation, update game state, or perform any other logic
-    
-    # Example response: Return the processed message as a confirmation
-        return HttpResponse(f'Message received: {message}')
+        move = request.POST.get('move')
+        if 'board' not in request.session:
+            board = chess.Board()
+            request.session['board'] = board.fen()
+        else:
+            board = chess.Board(request.session['board'])
+
+        # Perform move validation
+        try:
+            parsed_move = board.parse_san(move)
+            if parsed_move in board.legal_moves:
+                board.push(parsed_move)
+                valid_move = True
+                message = 'Valid move!'
+            else:
+                valid_move = False
+                message = 'Invalid move. Please try again.'
+        except ValueError:
+            valid_move = False
+            message = 'Invalid move. Please try again.'
+
+        # Update the session with the new board state
+        request.session['board'] = board.fen()
+
+        # Generate the SVG representation of the updated chessboard
+        svg_board = chess.svg.board(board=board)
+
+        # Pass the updated chessboard, validation result, and message to the template
+        context = {
+            'svg_board': svg_board,
+            'valid_move': valid_move,
+            'message': message,
+        }
+
+        return render(request, 'chessboard.html', context)
     else:
-        board = chess.Board()
+        if 'board' not in request.session:
+            board = chess.Board()
+            request.session['board'] = board.fen()
+        else:
+            board = chess.Board(request.session['board'])
+
         svg_board = chess.svg.board(board=board)
         turn = board.turn
         context = {
@@ -23,12 +56,19 @@ def chessboard(request):
             'turn': turn,
         }
         return render(request, 'chessboard.html', context)
+
+
+
     
-
-
 def generate_board(request):
-    board = chess.Board("r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4")
-    return HttpResponse("done generating board")
+    board = chess.Board()
+    return HttpResponse(("done generating board: " + board.fen() ))
 
 def board(request):
-    return HttpResponse(print(chess.Board))
+    board = chess.Board()
+    squares = chess.SquareSet()
+#    img = chess.svg.board(board=board)
+    return HttpResponse(chess.svg.board(board=board, squares=squares))
+@login_required(login_url='/users/login')
+def play_home(request):
+    return render(request, 'play.html')
