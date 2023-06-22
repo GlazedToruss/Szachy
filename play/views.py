@@ -99,25 +99,25 @@ def join(request):
 
 @login_required
 def create_game(request):
-    #if request.method == 'POST':
+    if request.method == 'POST':
         user = request.user  # Pobranie obiektu aktualnie zalogowanego użytkownika
         id=random.randint(1000000000, 9999999999)
-        game = Game(i_d=id, moves='...', player1=user)
-        game.save()
+        game = Game(i_d=id, moves='', player1=user, player2=user, is_waiting='True')
+#        game.save()
         my_variable='hello'
         context = {'my_variable': my_variable}
         #return render(request, 'waiting_for_player.html', context)
         return redirect(f"/play/new/{id}/", context, id)
        
-    #return render(request, 'create_game.html')
+    return render(request, 'create_game.html')
 
 @login_required
-def waiting_for_player(request, game_id):
+def waiting_for_player(request, id):
 #   Potrzebna logika, sprawdzająca czy obiekt gry o 'i_d = game_id', ma flagę 'game_is_waiting' ustawioną na True czy na False
 #    if game_is_waiting(game_id):
 #        return redirect('play_game', game_id=game_id)
 #   else:
-        return render(request, 'waiting_for_player.html', {'id': game_id})
+        return render(request, 'waiting_for_player.html', {'id': id})
 
 #@login_required(login_url='/users/login')
 #def play_game(request, game_id):
