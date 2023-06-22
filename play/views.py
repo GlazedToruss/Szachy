@@ -17,26 +17,32 @@ def get_random_string(length):
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str 
 
-def chessboard(request, i_d):
-    game = get_object_or_404(Game, i_d=i_d)  # Retrieve the game instance using the provided i_d
+def chessboard(request, id):
+    game = get_object_or_404(Game, i_d=id)  # Retrieve the game instance using the provided i_d
     if request.method == 'POST':
-        move = request.POST.get('move')
-        board = chess.Board(game.moves)
-#        if 'board' not in request.session:
-#            board = chess.Board()
-#            request.session['board'] = board.fen()
-#        else:
-#            board = chess.Board(request.session['board'])
+
+        #getting new move from user
+        new_move = request.POST.get('move')
+        #initializing chessboard
+        if game.moves: game_state = game.moves
+        else: game_state = None
+        board = chess.Board(game_state)
+        #updating chessboard
+        #history_of_moves = []
+        #moves_to_parse = game.moves
+        #history_of_moves = moves_to_parse.split('_')[:-1]
 
         # Perform move validation
         try:
-            parsed_move = board.parse_san(move)
+            parsed_move = board.parse_san(new_move)
             if parsed_move in board.legal_moves:
                 board.push(parsed_move)
                 valid_move = True
                 message = 'Valid move!'
-                game.moves = board.fen()  # Update the game moves
+                #game.moves += parsed_move  # Update the game moves
+                game.moves = board.fen
                 game.save()  # Save the game instance
+                #history_of_moves.append(parsed_move)
             else:
                 valid_move = False
                 message = 'Invalid move. Please try again.'
@@ -54,6 +60,7 @@ def chessboard(request, i_d):
             'valid_move': valid_move,
             'message': message,
             'turn': turn,
+            'id': id,
         }
 
         return render(request, 'chessboard.html', context)
@@ -63,19 +70,23 @@ def chessboard(request, i_d):
 #            request.session['board'] = board.fen()
 #        else:
 #            board = chess.Board(request.session['board'])
-        board = chess.Board(game.moves)
+        if game.moves=='':
+                board = chess.Board()
+        else:
+                board = chess.Board(game.moves)
 
-        
-        svg_board = chess.svg.board(board=board)
+        #Show chessboard according to player color
+        if game.player1 == request.user: svg_board = chess.svg.board(board=board)
+        else: svg_board = chess.svg.board(board=board, orientation=chess.BLACK)
+
+
         turn = board.turn
         context = {
             'svg_board': svg_board,
             'turn': turn,
+            'id': id,
         }
         return render(request, 'chessboard.html', context)
-
-
-
 
     
 def generate_board(request):
@@ -113,9 +124,9 @@ def join_code_view(request):
                 user = request.user
                 game.player2=user
                 game.save()
-                return render(request, 'waiting_for_player.html', {'id': id})
+                return redirect(f"/play/chessboard/{id}/", id)
             else:
-                return redirect('chessboard', i_d=id)  
+                return render(request, 'waiting_for_player.html', {'id': id}) 
             #user = request.user
             #game.player2=user
             #game.save()
@@ -145,7 +156,7 @@ def waiting_for_player(request, id):
     game = get_object_or_404(Game, i_d=id)
 #   Potrzebna logika, sprawdzająca czy obiekt gry o 'i_d = game_id', ma flagę 'game_is_waiting' ustawioną na True czy na False
     if Game.is_waiting:
-        return render(request, 'waiting_for_player.html', {'i_d': id})
+        return render(request, 'waiting_for_player.html', {'id': id})
     else:
         return redirect('chessboard', i_d=id)
 

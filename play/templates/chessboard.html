@@ -25,7 +25,7 @@
             Black to move
         {% endif %}
     </p>
-    <form method="post" action="{% url 'chessboard' %}">
+    <form method="post" action="{% url 'chessboard' id=id %}">
         {% csrf_token %}
         <label for="move">Enter your move:</label>
         <input type="text" id="move" name="move" required>
