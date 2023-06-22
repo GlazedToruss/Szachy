@@ -1,22 +1,65 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import chess
 import chess.svg
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from play.models import Game
+from django.db import models
 # Create your views here.
+import random
+import string
 
-    
-def chessboard(request):
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str 
+
+def chessboard(request, game_id):
     if request.method == 'POST':
-        message = request.POST.get('message')
-        print("Client message: " + message)
-    # Process the player's message here
-    # You can perform validation, update game state, or perform any other logic
-    
-    # Example response: Return the processed message as a confirmation
-        return HttpResponse(f'Message received: {message}')
+        move = request.POST.get('move')
+        if 'board' not in request.session:
+            board = chess.Board()
+            request.session['board'] = board.fen()
+        else:
+            board = chess.Board(request.session['board'])
+
+        # Perform move validation
+        try:
+            parsed_move = board.parse_san(move)
+            if parsed_move in board.legal_moves:
+                board.push(parsed_move)
+                valid_move = True
+                message = 'Valid move!'
+            else:
+                valid_move = False
+                message = 'Invalid move. Please try again.'
+        except ValueError:
+            valid_move = False
+            message = 'Invalid move. Please try again.'
+
+        # Update the session with the new board state
+        request.session['board'] = board.fen()
+
+        # Generate the SVG representation of the updated chessboard
+        svg_board = chess.svg.board(board=board, lastmove=parsed_move)
+
+        # Pass the updated chessboard, validation result, and message to the template
+        context = {
+            'svg_board': svg_board,
+            'valid_move': valid_move,
+            'message': message,
+        }
+
+        return render(request, 'chessboard.html', context)
     else:
-        board = chess.Board()
+        if 'board' not in request.session:
+            board = chess.Board()
+            request.session['board'] = board.fen()
+        else:
+            board = chess.Board(request.session['board'])
+
         svg_board = chess.svg.board(board=board)
         turn = board.turn
         context = {
@@ -24,11 +67,60 @@ def chessboard(request):
             'turn': turn,
         }
         return render(request, 'chessboard.html', context)
+
+
+
     
 def generate_board(request):
-    board = chess.Board("r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4")
-    return HttpResponse("done generating board")
+    board = chess.Board()
+    return HttpResponse(("done generating board: " + board.fen() ))
 
 @login_required(login_url='/users/login')
 def play_home(request):
     return render(request, 'play.html')
+
+def board(request):
+    board = chess.Board()
+    squares = chess.SquareSet()
+#    img = chess.svg.board(board=board)
+    return HttpResponse(chess.svg.board(board=board, squares=squares))
+
+@login_required(login_url='/users/login')
+def play_home(request):
+    return render(request, 'play.html')
+
+@login_required(login_url='/users/login')
+def history(request):
+    return render(request, 'history.html')
+
+@login_required(login_url='/users/login')
+def join(request):
+    return render(request, )
+
+@login_required
+def create_game(request):
+    #if request.method == 'POST':
+        user = request.user  # Pobranie obiektu aktualnie zalogowanego użytkownika
+        id=random.randint(1000000000, 9999999999)
+        game = Game(i_d=id, moves='...', player1=user)
+        game.save()
+        my_variable='hello'
+        context = {'my_variable': my_variable}
+        #return render(request, 'waiting_for_player.html', context)
+        return redirect(f"/play/new/{id}/", context, id)
+       
+    #return render(request, 'create_game.html')
+
+@login_required
+def waiting_for_player(request, game_id):
+#   Potrzebna logika, sprawdzająca czy obiekt gry o 'i_d = game_id', ma flagę 'game_is_waiting' ustawioną na True czy na False
+#    if game_is_waiting(game_id):
+#        return redirect('play_game', game_id=game_id)
+#   else:
+        return render(request, 'waiting_for_player.html', {'id': game_id})
+
+#@login_required(login_url='/users/login')
+#def play_game(request, game_id):
+#    game = Game.objects.get(is_waiting=game_id)
+#    return redirect('chessboard', request, game=game)
+

@@ -1,0 +1,15 @@
+Done:
+- Users + games database
+- Login utility + page
+- Improve client<->server connection and connect it with game logic to let user play the game
+
+
+ToDo:
+@Paweł
+- Let user create a game (generating game_ID is necessary)
+- on /play/ website, let user create new game, show them their last 10 games history (describe them by ID or date of creation) and let them check history of
+all the games played
+
+@Maciek
+- Make use of game_ID to manage various games
+- Manage accessibility of all the game sessions via unique url (game_ID might be used)

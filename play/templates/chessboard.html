@@ -8,68 +8,76 @@
             height: 700px;
         }
     </style>
-<script>
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    function sendMessage() {
-        var message = document.getElementById("message-input").value;
-
-        // Create a new XMLHttpRequest object
-        var xhr = new XMLHttpRequest();
-
-        // Set up the request
-        xhr.open("POST", "/play/show", true);
-
-        // Set the content type header
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-        // Get the CSRF token
-        var csrftoken = getCookie('csrftoken');
-
-        // Set the CSRF token in the request header
-        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-
-        // Set up the callback function
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                // Handle the server response if needed
-                console.log("Server response:", xhr.responseText);
-            }
-        };
-
-        // Send the request
-        xhr.send("message=" + encodeURIComponent(message));
-    }
-</script>
-
-
 </head>
 <body>
     <h1>Chessboard</h1>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
     <div class="board">
         {{ svg_board|safe }}
     </div>
     <p>
-        {% if turn == True %}
-          White to move
+        {% if turn %}
+            White to move
         {% else %}
-          Black to move
+            Black to move
         {% endif %}
     </p>
-    <input type="text" id="message-input" placeholder="Enter your message">
-    <button onclick="sendMessage()">Send Message</button>
+    <form method="post" action="{% url 'chessboard' %}">
+        {% csrf_token %}
+        <label for="move">Enter your move:</label>
+        <input type="text" id="move" name="move" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function sendMessage() {
+            var move = document.getElementById("move").value;
+
+            // Create a new XMLHttpRequest object
+            var xhr = new XMLHttpRequest();
+
+            // Set up the request
+            xhr.open("POST", window.location.href, true);
+
+            // Set the content type header
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            // Get the CSRF token
+            var csrftoken = getCookie('csrftoken');
+
+            // Set the CSRF token in the request header
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+
+            // Set up the callback function
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    // Handle the server response if needed
+                    console.log("Server response:", xhr.responseText);
+                    window.location.reload();  // Refresh the page after move submission
+                }
+            };
+
+            // Send the request
+            xhr.send("move=" + encodeURIComponent(move));
+        }
+    </script>
 </body>
 </html>
