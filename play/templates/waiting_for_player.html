@@ -1,3 +1,108 @@
-<h1>To jest strona gdzie jest poczekalnia - czekasz na innego gracza aż wejdzie w linka</h1>
-<p>Share the following game ID with another player to join the game: {{ my_variable }}  {{context}}</p>
-<h1>/play/new/{{id}}/</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Poczekalnia - Czekasz na innego gracza</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    
+    h1 {
+      color: #333;
+      font-size: 24px;
+      margin-top: 40px;
+    }
+    
+    p {
+      color: #666;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    
+    .game-id {
+      font-weight: bold;
+      font-size: 28px;
+      color: #0000FF;
+    }
+    
+    .play-link {
+      color: #00FF00;
+      font-size: 24px;
+      margin-top: 40px;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .navbar ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+    }
+
+    .navbar li {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .navbar li a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+    }
+
+    .navbar li a:hover {
+      background-color: #4caf50;
+    }
+    .navbar hello {
+        color: #fff;
+      padding: 10px;
+      text-align: right;
+    }
+    .game-box {
+      width: 300px;
+      height: 200px;
+      background-color: #4caf50;
+      margin: 20px auto;
+      text-align: center;
+      line-height: 200px;
+      font-size: 24px;
+      display: inline-block;
+      vertical-align: top;
+      color: #fff;
+      text-decoration: none;
+    }
+    
+    
+    
+  
+  </style>
+</head>
+<body>
+    <div class="navbar">
+        <ul>
+          <li>Hello, {{request.user}} </li>
+          <li><a href="/users/logout">Logout</a></li>
+        </ul>
+      </div>
+    
+      <h1 style="text-align: center;">To jest strona poczekalni - oczekujesz na innego gracza</h1>
+  
+    <p>Podziel się poniższym identyfikatorem gry, aby dołączyć do gry: <span class="game-id">{{ my_variable }}  {{context}}</span></p>
+    <h1>http://127.0.0.1:8000/play/new/{{id}}/</h1>
+</body>
+</html>
