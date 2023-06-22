@@ -12,5 +12,4 @@ class Game(models.Model):
     def __str__(self):
         return self.i_d
 
-from .models import Game
 
