@@ -1,6 +1,91 @@
 <!-- create_game.html -->
-<form method="post" action="/play/new">
-    {% csrf_token %}
-    <input type="submit" value="Create Game">
+<style>
+  .form-container {
+      text-align: center;
+      margin-top: 50px;
+  }
+
+  .submit-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+  }
+
+  .submit-button:hover {
+      background-color: #45a049;
+  }
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .navbar ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+    }
+
+    .navbar li {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .navbar li a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+    }
+
+    .navbar li a:hover {
+      background-color: #4caf50;
+    }
+    .navbar hello {
+        color: #fff;
+      padding: 10px;
+      text-align: right;
+    }
+    .game-box {
+      width: 300px;
+      height: 200px;
+      background-color: #4caf50;
+      margin: 20px auto;
+      text-align: center;
+      line-height: 200px;
+      font-size: 24px;
+      display: inline-block;
+      vertical-align: top;
+      color: #fff;
+      text-decoration: none;
+    }
+</style>
+<div class="navbar">
+  <ul>
+    <li>Hello, {{request.user}} </li>
+    <li><a href="/users/logout">Logout</a></li>
+  </ul>
+</div>
+
+<h1 style="text-align: center;">Aby utworzyć grę, kliknij w poniższy przycisk.</h1>
+<div class="form-container">
+  <form method="post" action="/play/new">
+      {% csrf_token %}
+      <input class="submit-button" type="submit" value="Create Game">
   </form>
+</div>
+
   
