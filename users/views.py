@@ -34,7 +34,7 @@ def loginn(request):
 
         if user is not None:
             login(request, user)
-            return redirect('/play')
+            return redirect('/play/')
         else:
             messages.info(request, 'Username or Passowrd is incorrect :c')
             
