@@ -12,5 +12,5 @@ urlpatterns = [
     path('new/<str:id>/', views.waiting_for_player, name='waiting_for_player'),
 #    path('new/<str:id>/', views.play_game, name='play_game'),
 #    path('new/<str:id>/', views.chessboard, name='chessboard'),
-    path("join", views.join),
+    path('join/', views.join_code_view, name='join_code_view'),
 ]

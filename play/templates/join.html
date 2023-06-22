@@ -1,1 +1,15 @@
-to jest join
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Strona z parametrem</title>
+</head>
+<body>
+    <h1>Wpisz parametr</h1>
+    <form method="POST" action="">
+        
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Zapisz</button>
+    </form>
+</body>
+</html>

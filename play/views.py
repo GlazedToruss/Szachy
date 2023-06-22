@@ -4,10 +4,11 @@ import chess
 import chess.svg
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from play.models import Game
+from play.models import Game, JoinCode
 from django.db import models
 import random
 import string
+from .forms import JoinCodeForm
 from django.shortcuts import get_object_or_404
 
 def get_random_string(length):
@@ -100,14 +101,30 @@ def history(request):
     return render(request, 'history.html')
 
 @login_required(login_url='/users/login')
-def join(request):
-    #User1 stworzył grę o ID=8817592008
-    #User2 używa join by zmienić parametr gry player2 z User1 na User2
-    #Następnie flaga Is_waiting zmienia sie na False
-    #Następuje przekierowanie do gry
-
-
-    return render(request)
+def join_code_view(request):
+    if request.method == 'POST':
+        form = JoinCodeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            
+            id= form.cleaned_data.get('code')
+            game = get_object_or_404(Game, i_d=id)
+            if Game.is_waiting:
+                user = request.user
+                game.player2=user
+                game.save()
+                return render(request, 'waiting_for_player.html', {'id': id})
+            else:
+                return redirect('chessboard', i_d=id)  
+            #user = request.user
+            #game.player2=user
+            #game.save()
+            #return redirect(f"/play/new/{id}/")
+            
+    else:
+        form = JoinCodeForm()
+    
+    return render(request, 'join.html', {'form': form})
 
 @login_required
 def create_game(request):
