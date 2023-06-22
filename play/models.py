@@ -12,4 +12,8 @@ class Game(models.Model):
     def __str__(self):
         return self.i_d
 
-
+class JoinCode(models.Model):
+    code = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return self.code
